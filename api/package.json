@@ -1,0 +1,38 @@
+{
+  "name": "pusher-relay-chat-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "lint": "eslint .",
+    "format": "prettier --write '**/*.js'"
+  },
+  "author": {
+    "name": "Hugo Muller-Downing",
+    "email": "github@hu.md",
+    "url": "https://hugo.md"
+  },
+  "license": "MIT",
+  "eslintConfig": {
+    "extends": [
+      "prettier"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2017
+    }
+  },
+  "dependencies": {
+    "hapi": "^17.3.1",
+    "joi": "^13.2.0",
+    "pusher-chatkit-server": "^0.12.0",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.9.0",
+    "nodemon": "^1.17.3",
+    "xo": "^0.20.3"
+  }
+}
