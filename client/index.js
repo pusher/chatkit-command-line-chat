@@ -72,8 +72,10 @@ const authenticate = async name => {
 
     spinner.start('Fetching rooms..');
 
-    const availableRooms = await currentUser.getJoinableRooms();
+    const joinableRooms = await currentUser.getJoinableRooms();
     spinner.succeed('Fetched rooms');
+
+    const availableRooms = [...currentUser.rooms, ...joinableRooms];
 
     if (!availableRooms) throw new Error('No available rooms to join');
 
@@ -103,7 +105,7 @@ const authenticate = async name => {
     const {room: roomNumber} = await get(roomSchema);
     const {id: roomId, name: roomName} = availableRooms[roomNumber];
 
-    spinner.start(`Subscribing to room ${roomNumber}..`);
+    spinner.start(`Joining room ${roomNumber}..`);
 
     await currentUser.subscribeToRoom({
       roomId: roomId,
@@ -119,7 +121,7 @@ const authenticate = async name => {
       },
       messageLimit: 0,
     });
-    spinner.succeed(`Subscribed to ${roomName}`);
+    spinner.succeed(`Joined ${roomName}`);
     log(
       'You may now send and receive messages. Type your message and hit <Enter> to send.',
     );
