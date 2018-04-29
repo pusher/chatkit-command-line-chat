@@ -69,6 +69,9 @@ const {log} = console;
           });
           return h.response(data).code(201);
         } catch (err) {
+          if (err.error === 'services/chatkit/user_already_exists') {
+            return h.response().code(201);
+          }
           log(err);
           throw err;
         }
