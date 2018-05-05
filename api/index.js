@@ -1,6 +1,6 @@
 const Hapi = require('hapi');
 const Joi = require('joi');
-const Chatkit = require('pusher-chatkit-server');
+const Chatkit = require('@pusher/chatkit-server');
 
 const {log} = console;
 
