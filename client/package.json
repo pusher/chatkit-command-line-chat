@@ -24,8 +24,6 @@
   "dependencies": {
     "@pusher/chatkit": "^0.7.9",
     "axios": "^0.18.0",
-    "blessed": "^0.1.81",
-    "clear": "^0.1.0",
     "jsdom": "^11.9.0",
     "ora": "^2.0.0",
     "prompt": "^1.0.0",
