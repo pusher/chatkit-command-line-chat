@@ -14,7 +14,7 @@ Run the auth server via:
 ```
 cd api/
 npm i
-npm start
+INSTANCE_LOCATOR=YOUR_INSTANCE_LOCATOR CHATKIT_KEY=YOUR_CHATKIT_KEY npm start
 ```
 
 ## Client
@@ -24,5 +24,5 @@ Run the client via:
 ```
 cd api/
 npm i
-node index.js userId roomId
+INSTANCE_LOCATOR=YOUR_INSTANCE_LOCATOR node index.js
 ```
