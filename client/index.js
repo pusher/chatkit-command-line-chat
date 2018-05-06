@@ -16,23 +16,23 @@ const makeChatkitNodeCompatible = () => {
   const {window} = new JSDOM();
   global.window = window;
   global.navigator = {};
-}
+};
 
 makeChatkitNodeCompatible();
 
 const {INSTANCE_LOCATOR: instanceLocator} = process.env;
-const AUTH_URL = 'http://localhost:3000';
+const AUTH_URL = 'http://localhost:3001';
 
 if (!instanceLocator) {
   log('Please set INSTANCE_LOCATOR environment variable');
   process.exit(1);
 }
 
-const authenticate = async name => {
+const authenticate = async username => {
   try {
-    const {status} = await axios.post(AUTH_URL + '/users', {name});
-  } catch (err) {
-    throw new Error('Failed to authenticate', err);
+    const {data} = await axios.post(AUTH_URL + '/users', {username});
+  } catch ({message}) {
+    throw new Error(`Failed to authenticate, ${message}`);
   }
 };
 
@@ -69,7 +69,7 @@ const authenticate = async name => {
     const chatManager = new ChatManager({
       instanceLocator,
       userId,
-      tokenProvider: new TokenProvider({url: AUTH_URL + '/auth'}),
+      tokenProvider: new TokenProvider({url: AUTH_URL + '/authenticate'}),
     });
 
     spinner.start('Connecting to Pusher..');
@@ -83,7 +83,10 @@ const authenticate = async name => {
 
     const availableRooms = [...currentUser.rooms, ...joinableRooms];
 
-    if (!availableRooms) throw new Error("Couldn't find any available rooms. If you're the developer, go to dash.pusher.com, open your Chatkit instance, and create a room (or two!) using the Inspector tab!");
+    if (!availableRooms)
+      throw new Error(
+        "Couldn't find any available rooms. If you're the developer, go to dash.pusher.com, open your Chatkit instance, and create a room (or two!) using the Inspector tab!",
+      );
 
     log('Available rooms:');
     availableRooms.forEach((room, index) => {
