@@ -3,9 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const Chatkit = require('@pusher/chatkit-server');
 
-const {INSTANCE_LOCATOR: instanceLocator, SECRET_KEY: key} = process.env;
+const {INSTANCE_LOCATOR: instanceLocator, CHATKIT_KEY: key} = process.env;
 if (!instanceLocator || !key) {
-  log('INSTANCE_LOCATOR or SECRET_KEY not set in environment.');
+  log('INSTANCE_LOCATOR or CHATKIT_KEY not set in environment.');
   process.exit(1);
 }
 
