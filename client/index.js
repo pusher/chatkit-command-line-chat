@@ -5,28 +5,34 @@ const readline = require('readline');
 const axios = require('axios');
 const prompt = require('prompt');
 const ora = require('ora');
-const blessed = require('blessed');
-const clear = require('clear');
-
-// Hack so that @pusher/chatkit can be used
-const {window} = new JSDOM();
-global.window = window;
-global.navigator = {};
 
 const {log} = console;
 
+/* 
+ * Chatkit does not currently support Node, so let's make it think we're a browser env!
+ * Follow the issue on GitHub: https://github.com/pusher/chatkit-client-js/issues/70
+ */
+const makeChatkitNodeCompatible = () => {
+  const {window} = new JSDOM();
+  global.window = window;
+  global.navigator = {};
+};
+
+makeChatkitNodeCompatible();
+
 const {INSTANCE_LOCATOR: instanceLocator} = process.env;
-const AUTH_URL = 'http://localhost:3000';
+const AUTH_URL = 'http://localhost:3001';
 
 if (!instanceLocator) {
   log('Please set INSTANCE_LOCATOR environment variable');
   process.exit(1);
 }
 
-const authenticate = async name => {
-  const {status} = await axios.post(AUTH_URL + '/users', {name});
-  if (status !== 201) {
-    throw new Error('Failed to authenticate');
+const authenticate = async username => {
+  try {
+    const {data} = await axios.post(AUTH_URL + '/users', {username});
+  } catch ({message}) {
+    throw new Error(`Failed to authenticate, ${message}`);
   }
 };
 
@@ -63,7 +69,7 @@ const authenticate = async name => {
     const chatManager = new ChatManager({
       instanceLocator,
       userId,
-      tokenProvider: new TokenProvider({url: AUTH_URL + '/auth'}),
+      tokenProvider: new TokenProvider({url: AUTH_URL + '/authenticate'}),
     });
 
     spinner.start('Connecting to Pusher..');
@@ -77,7 +83,10 @@ const authenticate = async name => {
 
     const availableRooms = [...currentUser.rooms, ...joinableRooms];
 
-    if (!availableRooms) throw new Error('No available rooms to join');
+    if (!availableRooms)
+      throw new Error(
+        "Couldn't find any available rooms. If you're the developer, go to dash.pusher.com, open your Chatkit instance, and create a room (or two!) using the Inspector tab!",
+      );
 
     log('Available rooms:');
     availableRooms.forEach((room, index) => {
