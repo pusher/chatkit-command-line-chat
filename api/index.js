@@ -5,7 +5,7 @@ const Chatkit = require('@pusher/chatkit-server');
 
 const {INSTANCE_LOCATOR: instanceLocator, CHATKIT_KEY: key} = process.env;
 if (!instanceLocator || !key) {
-  log('INSTANCE_LOCATOR or CHATKIT_KEY not set in environment.');
+  console.log('INSTANCE_LOCATOR or CHATKIT_KEY not set in environment.');
   process.exit(1);
 }
 
