@@ -55,12 +55,12 @@ const authenticate = async username => {
       },
     ];
 
-    const {username: userId} = await get(usernameSchema);
+    const {username} = await get(usernameSchema);
 
     try {
       spinner.start('Authenticating..');
-      await authenticate(userId);
-      spinner.succeed(`Authenticated as ${userId}`);
+      await authenticate(username);
+      spinner.succeed(`Authenticated as ${username}`);
     } catch (err) {
       spinner.fail();
       throw err;
@@ -68,7 +68,7 @@ const authenticate = async username => {
 
     const chatManager = new ChatManager({
       instanceLocator,
-      userId,
+      userId: username,
       tokenProvider: new TokenProvider({url: AUTH_URL + '/authenticate'}),
     });
 
@@ -77,7 +77,6 @@ const authenticate = async username => {
     spinner.succeed('Connected');
 
     spinner.start('Fetching rooms..');
-
     const joinableRooms = await currentUser.getJoinableRooms();
     spinner.succeed('Fetched rooms');
 
@@ -112,16 +111,16 @@ const authenticate = async username => {
     ];
 
     const {room: roomNumber} = await get(roomSchema);
-    const {id: roomId, name: roomName} = availableRooms[roomNumber];
+    const room = availableRooms[roomNumber];
 
     spinner.start(`Joining room ${roomNumber}..`);
 
     await currentUser.subscribeToRoom({
-      roomId: roomId,
+      roomId: room.id,
       hooks: {
         onNewMessage: message => {
           const {senderId, text} = message;
-          if (senderId === userId) return;
+          if (senderId === username) return;
           log(`${senderId}: ${text}`);
         },
         onUserJoined: ({name}) => {
@@ -130,7 +129,7 @@ const authenticate = async username => {
       },
       messageLimit: 0,
     });
-    spinner.succeed(`Joined ${roomName}`);
+    spinner.succeed(`Joined ${room.name}`);
     log(
       'You may now send and receive messages. Type your message and hit <Enter> to send.',
     );
@@ -138,8 +137,7 @@ const authenticate = async username => {
     const input = readline.createInterface({input: process.stdin});
 
     input.on('line', async text => {
-      // TODO: Handle rejection here!
-      await currentUser.sendMessage({roomId, text});
+      await currentUser.sendMessage({roomId: room.id, text});
     });
   } catch (err) {
     spinner.fail();
