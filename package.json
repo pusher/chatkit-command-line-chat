@@ -11,8 +11,8 @@
     "format": "prettier --write '**/*.js'"
   },
   "dependencies": {
-    "@pusher/chatkit": "^0.7.9",
-    "@pusher/chatkit-server": "^0.12.1",
+    "@pusher/chatkit-client": "^1.9.1",
+    "@pusher/chatkit-server": "^2.0.1",
     "axios": "^0.18.0",
     "jsdom": "^11.9.0",
     "ora": "^2.0.0",

@@ -1,7 +1,7 @@
 const util = require("util");
 const readline = require("readline");
 const { JSDOM } = require("jsdom");
-const { ChatManager, TokenProvider } = require("@pusher/chatkit");
+const { ChatManager, TokenProvider } = require("@pusher/chatkit-client");
 const axios = require("axios");
 const prompt = require("prompt");
 const ora = require("ora");
@@ -58,7 +58,7 @@ const main = async () => {
       tokenProvider: new TokenProvider({
         url: "http://localhost:3001/authenticate"
       })
-    });
+    })
 
     spinner.start("Connecting to Pusher..");
     const currentUser = await chatManager.connect();
@@ -103,17 +103,20 @@ const main = async () => {
 
     spinner.start(`Joining room ${chosenRoom}..`);
 
-    await currentUser.subscribeToRoom({
+    await currentUser.subscribeToRoomMultipart({
       roomId: room.id,
       hooks: {
-        onNewMessage: message => {
-          const { senderId, text } = message;
-          if (senderId === username) return;
-          console.log(`${senderId}: ${text}`);
+        onMessage: message => {
+          const { sender, parts } = message
+          if (sender.id === username) {
+            return
+          }
+          console.log(`${sender.id}: ${parts[0].payload.content}`)
         }
       },
-      messageLimit: 0
-    });
+      messageLimit:0
+      
+    })
     spinner.succeed(`Joined ${room.name}`);
     console.log(
       "You may now send and receive messages. Type your message and hit <Enter> to send."
@@ -122,7 +125,7 @@ const main = async () => {
     const input = readline.createInterface({ input: process.stdin });
 
     input.on("line", async text => {
-      await currentUser.sendMessage({ roomId: room.id, text });
+      await currentUser.sendSimpleMessage({ roomId: room.id, text });
     });
   } catch (err) {
     spinner.fail();

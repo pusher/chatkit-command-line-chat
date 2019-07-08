@@ -7,8 +7,9 @@ const app = express();
 
 const chatkit = new Chatkit.default({
   instanceLocator: "YOUR_INSTANCE_LOCATOR",
-  key: "YOUR_KEY"
-});
+  key:
+    "YOUR_SECRET_KEY"
+})
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
